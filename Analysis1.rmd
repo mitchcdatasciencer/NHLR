@@ -1,0 +1,40 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+```
+
+#Load data
+```{r}
+plays <- read.csv("C:/Users/mitch/OneDrive/Desktop/R Coding/NHL Data/game_plays.csv")
+```
+
+#Clean data
+```{r}
+plays$dateTime <- as.Date(plays$dateTime)
+plays$event <- as.factor(plays$event)
+
+```
+
+#Filter data for shots & goals only
+#Look at data from 2015-2016 season on
+```{r}
+plays <- plays %>% filter(dateTime >= lubridate::ymd("20150701"), event %in% c("Blocked Shot", "Goal", "Missed Shot", "Shot"))
+```
+
+#plot shots
+```{r}
+plays %>%
+  select(x, y, event) %>%
+  slice_head(n = 10000) %>%
+  mutate(
+      event = ifelse(event == 'Goal', 'Goal', 'Shot')
+  ) %>%
+  ggplot(aes(x = x, y = y, color = event)) + geom_point(alpha = 0.2)
+
+
+```
+
